@@ -1,0 +1,23 @@
+name = "remix-d1-northwind"
+compatibility_date = "2023-01-18"
+compatibility_flags = ["streams_enable_constructors"]
+
+[[env.local.d1_databases]]
+binding = "DB"
+database_name = "d1-northwind"
+database_id = "1"
+
+[[env.dev.d1_databases]]
+binding = "DB"
+database_name = "d1-northwind-staging"
+database_id = "b98e08e0-bb6b-4b15-b7af-33f3b215f577"
+
+[[env.production.d1_databases]]
+binding = "DB"
+database_name = "d1-northwind"
+database_id = "699ec5da-e0a9-44d1-91d3-7b1daae10736"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "d1-northwind"
+database_id = "699ec5da-e0a9-44d1-91d3-7b1daae10736"
