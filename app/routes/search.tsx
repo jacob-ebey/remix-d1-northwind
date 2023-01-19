@@ -14,24 +14,26 @@ export function loader({ context, request }: LoaderArgs) {
   const query = url.searchParams.get("q");
   const table = url.searchParams.get("t") || "products";
 
-  const searchPromise = context.DB.prepare(
-    table == "products"
-      ? `
+  const searchPromise = !query
+    ? Promise.resolve([])
+    : context.DB.prepare(
+        table == "products"
+          ? `
           SELECT Id, ProductName, SupplierId, CategoryId, QuantityPerUnit, UnitPrice, UnitsInStock, UnitsOnOrder, ReorderLevel, Discontinued
           FROM Product
           WHERE ProductName
           LIKE ?2
           LIMIT ?1
         `
-      : `
+          : `
           SELECT Id, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax
           FROM Customer
           WHERE CompanyName LIKE ?2 OR ContactName LIKE ?2 OR ContactTitle LIKE ?2 OR Address LIKE ?2
           LIMIT ?1`
-  )
-    .bind(50, `%${query}%`)
-    .all()
-    .then((res) => res.results);
+      )
+        .bind(50, `%${query}%`)
+        .all()
+        .then((res) => res.results);
 
   return defer({
     searchPromise,
