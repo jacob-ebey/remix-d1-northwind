@@ -8,7 +8,7 @@
     "dev": "npm run build:css && concurrently \"npm:dev:*\"",
     "dev:css": "postcss ./css/admin.scss -o ./app/css/admin.css --watch",
     "dev:remix": "remix watch",
-    "dev:cloudflare": "wrangler pages dev public --compatibility-date=2023-01-18 --persist --d1 DB --env local --live-reload",
+    "dev:cloudflare": "wrangler pages dev public --compatibility-date=2023-01-18 --persist --d1 DB --binding SESSION_SECRET=s --env local --live-reload",
     "typecheck": "tsc"
   },
   "dependencies": {

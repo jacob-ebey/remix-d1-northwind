@@ -1,6 +1,8 @@
 import { Suspense } from "react";
-import { defer, type LoaderArgs } from "@remix-run/cloudflare";
+import { type LoaderArgs } from "@remix-run/cloudflare";
 import { Await, Link, useLoaderData, useRevalidator } from "@remix-run/react";
+
+import { maybeDefer } from "~/utils";
 
 export function loader({ context }: LoaderArgs) {
   const employeesPromise = context.DB.prepare(
@@ -34,7 +36,7 @@ export function loader({ context }: LoaderArgs) {
     }>()
     .then((res) => res.results);
 
-  return defer({
+  return maybeDefer(context.session, {
     employeesPromise,
   });
 }

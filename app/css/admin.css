@@ -1741,12 +1741,16 @@ video {
     margin-left: 0.5rem;
 }
 
+.mt-6 {
+    margin-top: 1.5rem;
+}
+
 .mt-2 {
     margin-top: 0.5rem;
 }
 
-.mt-6 {
-    margin-top: 1.5rem;
+.mt-4 {
+    margin-top: 1rem;
 }
 
 .block {
@@ -1788,6 +1792,10 @@ video {
 .object-scale-down {
     -o-object-fit: scale-down;
        object-fit: scale-down;
+}
+
+.p-3 {
+    padding: 0.75rem;
 }
 
 .pt-2 {
@@ -1844,6 +1852,16 @@ video {
 .text-black {
     --tw-text-opacity: 1;
     color: rgb(0 0 0 / var(--tw-text-opacity));
+}
+
+.text-white {
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
+}
+
+.text-\[\#D1D5DB\] {
+    --tw-text-opacity: 1;
+    color: rgb(209 213 219 / var(--tw-text-opacity));
 }
 
 body {

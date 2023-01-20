@@ -1,5 +1,5 @@
 import { Suspense } from "react";
-import { defer, type LoaderArgs } from "@remix-run/cloudflare";
+import { type LoaderArgs } from "@remix-run/cloudflare";
 import {
   Await,
   Form,
@@ -9,13 +9,16 @@ import {
   useSearchParams,
 } from "@remix-run/react";
 
+import { maybeDefer } from "~/utils";
+
 export function loader({ context, request }: LoaderArgs) {
   const url = new URL(request.url);
   const query = url.searchParams.get("q");
   const table = url.searchParams.get("t") || "products";
 
   const searchPromise = !query
-    ? Promise.resolve([])
+    ? // TODO: this shouldn't be needed and is a bug in remix
+      (null as unknown as Promise<any[]>)
     : context.DB.prepare(
         table == "products"
           ? `
@@ -35,7 +38,7 @@ export function loader({ context, request }: LoaderArgs) {
         .all()
         .then((res) => res.results);
 
-  return defer({
+  return maybeDefer(context.session, {
     searchPromise,
   });
 }
@@ -121,7 +124,7 @@ export default function Search() {
         <Suspense fallback={<p className="mt-6">Loading...</p>}>
           <Await resolve={searchPromise}>
             {(results) => {
-              if (results.length === 0) {
+              if (!results || results.length === 0) {
                 return <p className="mt-6">No results</p>;
               }
               return (

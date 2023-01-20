@@ -1,16 +1,45 @@
 import { useEffect, useState } from "react";
-import { type LinksFunction, type MetaFunction } from "@remix-run/cloudflare";
 import {
+  json,
+  redirect,
+  type ActionArgs,
+  type LinksFunction,
+  type LoaderArgs,
+  type MetaFunction,
+} from "@remix-run/cloudflare";
+import {
+  Form,
   Links,
-  LiveReload,
   Meta,
   NavLink,
   Outlet,
   Scripts,
   ScrollRestoration,
+  useLoaderData,
+  useSubmit,
 } from "@remix-run/react";
 
 import adminStylesHref from "./css/admin.css";
+
+export function loader({ context }: LoaderArgs) {
+  return json({
+    delay: context.session.get("delay"),
+    shouldDefer: Boolean(context.session.get("defer")),
+  });
+}
+
+export async function action({ context, request }: ActionArgs) {
+  const formData = await request.formData();
+  const delay = Number(formData.get("delay"));
+  const shouldDefer = Boolean(formData.get("defer"));
+
+  console.log({ delay });
+  context.session.set("delay", delay);
+  context.session.set("defer", shouldDefer);
+
+  const url = new URL(request.headers.get("Referer") || request.url);
+  return redirect(url.pathname);
+}
 
 export let links: LinksFunction = () => [
   {
@@ -35,6 +64,8 @@ function updateClock() {
 }
 
 export default function App() {
+  const { delay, shouldDefer } = useLoaderData<typeof loader>();
+  const submit = useSubmit();
   const [subMenu, setSubMenu] = useState(false);
 
   useEffect(() => {
@@ -156,12 +187,6 @@ export default function App() {
                     </span>
                     <span className="menu-item-label">Dashboard</span>
                   </NavLink>
-                  {/*
-                            <NavLink to="/sim" activeClassName={"active"} end>
-                                <span className="icon material-icons">dynamic_form</span>
-                                <span className="menu-item-label">Simulations</span>
-                            </NavLink>
-                            */}
                 </li>
               </ul>
               <p className="menu-label">Backoffice</p>
@@ -235,6 +260,76 @@ export default function App() {
                   </NavLink>
                 </li>
               </ul>
+              <Form
+                replace
+                method="post"
+                className="mt-4 p-3"
+                onChange={(event) => {
+                  if (
+                    event.target instanceof HTMLInputElement &&
+                    event.target.name === "defer" &&
+                    event.target.form
+                  ) {
+                    submit(event.target.form, { replace: true });
+                  }
+                }}
+              >
+                <div className="field">
+                  <label className="label text-[#D1D5DB]">
+                    Data delay (ms)
+                  </label>
+                  <div className="field-body">
+                    <div className="field">
+                      <div className="control">
+                        <input
+                          type="text"
+                          inputMode="numeric"
+                          name="delay"
+                          defaultValue={delay || 0}
+                          min={0}
+                          className="input"
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="field">
+                  <label className="label text-[#D1D5DB]">Data loading</label>
+                  <div className="field-body">
+                    <div className="field grouped multiline">
+                      <div className="control">
+                        <label className="radio">
+                          <input
+                            type="radio"
+                            name="defer"
+                            value=""
+                            defaultChecked={!shouldDefer}
+                          />
+                          <span className="check"></span>
+                          <span className="control-label text-[#D1D5DB]">
+                            await
+                          </span>
+                        </label>
+                      </div>
+                      <div className="control">
+                        <label className="radio">
+                          <input
+                            type="radio"
+                            name="defer"
+                            value="1"
+                            defaultChecked={shouldDefer}
+                          />
+                          <span className="check"></span>
+                          <span className="control-label text-[#D1D5DB]">
+                            defer
+                          </span>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </Form>
             </div>
           </aside>
 
@@ -245,7 +340,6 @@ export default function App() {
 
         <ScrollRestoration />
         <Scripts />
-        <LiveReload />
       </body>
     </html>
   );

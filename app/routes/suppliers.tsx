@@ -1,8 +1,10 @@
 import { Suspense } from "react";
-import { defer, type LoaderArgs } from "@remix-run/cloudflare";
+import { type LoaderArgs } from "@remix-run/cloudflare";
 import { Await, Link, useLoaderData, useRevalidator } from "@remix-run/react";
 
-export function loader({ context }: LoaderArgs) {
+import { maybeDefer } from "~/utils";
+
+export async function loader({ context }: LoaderArgs) {
   const suppliersPromise = context.DB.prepare(
     `
     SELECT Id, CompanyName, ContactName, ContactTitle, Address, City, Region, PostalCode, Country, Phone, Fax, HomePage
@@ -22,8 +24,8 @@ export function loader({ context }: LoaderArgs) {
     }>()
     .then((res) => res.results);
 
-  return defer({
-    suppliersPromise,
+  return maybeDefer(context.session, {
+    suppliersPromise: suppliersPromise,
   });
 }
 

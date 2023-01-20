@@ -1,8 +1,9 @@
-import { defer, type LoaderArgs } from "@remix-run/cloudflare";
+import { type LoaderArgs } from "@remix-run/cloudflare";
 import { Await, Link, useLoaderData } from "@remix-run/react";
 import { Suspense } from "react";
 
 import { AddTableField } from "~/components/tools";
+import { maybeDefer } from "~/utils";
 
 export function loader({ context, params }: LoaderArgs) {
   const supplierPromise = context.DB.prepare(
@@ -29,7 +30,7 @@ export function loader({ context, params }: LoaderArgs) {
     }>()
     .then((r) => r || null);
 
-  return defer({
+  return maybeDefer(context.session, {
     supplierPromise,
   });
 }
