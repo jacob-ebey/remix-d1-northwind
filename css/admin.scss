@@ -37,6 +37,9 @@ body {
 
 .main-section {
   @apply p-6;
+
+  animation: fadeIn ease 0.5s;
+  opacity: 1;
 }
 
 .dropdown {
@@ -59,4 +62,26 @@ body {
 
 .form-screen .main-section {
   @apply flex h-screen items-center justify-center;
+}
+
+.fade-out {
+  animation: fadeOut ease 0.5s;
+  opacity: 0;
+}
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@keyframes fadeIn {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
 }

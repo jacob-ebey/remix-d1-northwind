@@ -16,6 +16,7 @@ import {
   Scripts,
   ScrollRestoration,
   useLoaderData,
+  useNavigation,
   useSubmit,
 } from "@remix-run/react";
 
@@ -65,6 +66,7 @@ function updateClock() {
 
 export default function App() {
   const { delay, shouldDefer } = useLoaderData<typeof loader>();
+  const navigation = useNavigation();
   const submit = useSubmit();
   const [subMenu, setSubMenu] = useState(false);
 
@@ -333,7 +335,12 @@ export default function App() {
             </div>
           </aside>
 
-          <section className="section main-section">
+          <section
+            className={
+              "section main-section " +
+              (navigation.state === "loading" ? "fade-out" : "")
+            }
+          >
             <Outlet />
           </section>
         </div>
